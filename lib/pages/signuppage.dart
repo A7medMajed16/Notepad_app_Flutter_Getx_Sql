@@ -1,8 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:trynote/controller/signupcontroller.dart';
+import 'package:trynote/pages/loginpage.dart';
+import 'package:trynote/pages/widgets/emailpassword.dart';
+import 'package:trynote/pages/widgets/username.dart';
+import 'package:trynote/pages/widgets/verify.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -13,117 +18,43 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   GlobalKey<FormState> formKey = GlobalKey();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passController = TextEditingController();
-  TextEditingController confirmPassController = TextEditingController();
+
+  SignupController signupController =
+      Get.put(SignupController(), permanent: true);
+
   TextEditingController userNameController = TextEditingController();
-  String errorMessage = '';
-  String? errorTextPassword;
+
   String? errorTextUserName;
-  String? errorTextEmail;
-  String? errorTextSubmitPassword;
 
   bool hidPass = true;
   bool hidConfirmPass = true;
 
-  Future signUpAccount(String emailAddress, String password) async {
-    if (mounted) {
-      try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailAddress,
-          password: password,
-        );
-        // Clear the error message on successful sign-up
-        if (mounted) {
-          setState(() {
-            errorMessage = '';
-          });
-        }
-        Get.back();
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password' && mounted) {
-          setState(() {
-            errorTextPassword = 'The password is weak.';
-          });
-        } else if (e.code == 'email-already-in-use' && mounted) {
-          setState(() {
-            errorTextEmail = 'The account already exists for that email.';
-          });
-        } else if (mounted) {
-          setState(() {
-            errorMessage = e.message ?? 'An unknown error occurred.';
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            errorMessage = e.toString();
-          });
-        }
-      }
-    }
-  }
-
-  String? validateUserName(String? value) {
-    if (value == null || value.isEmpty) {
-      return errorTextUserName = 'Please enter Your Name';
-    } else {
-      return errorTextUserName = null;
-    }
-  }
-
-  // Validator for password
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return errorTextPassword = 'Please enter a password';
-    }
-    if (value.length < 6) {
-      return errorTextPassword = 'Password should be at least 6 characters';
-    }
-    return null;
-  }
-
-  String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return errorTextEmail = 'Please enter an email address';
-    }
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-
-    if (!emailRegex.hasMatch(value)) {
-      return errorTextEmail = 'Please enter a valid email address';
-    }
-
-    return null;
-  }
-
-// Validator for password
-  String? validateSubmitPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return errorTextSubmitPassword = 'Please enter a password again';
-    }
-    if (confirmPassController.text != passController.text) {
-      return errorTextSubmitPassword = 'Submitpassword must equal the password';
-    }
-    if (confirmPassController.text == passController.text) {
-      return errorTextSubmitPassword = null;
-    }
-    return null;
-  }
-
-  @override
-  void dispose() {
-    passController.dispose();
-    emailController.dispose();
-    userNameController.dispose();
-    confirmPassController.dispose();
-    super.dispose();
-  }
+  final ImagePicker picker = ImagePicker();
+  File? file;
+  String? url;
+  // List of pages to display
+  List<Widget> pages = [
+    const EmailPass(),
+    const Verify(),
+    const Username(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              signupController.clearProgress();
+              signupController.updatePage(0);
+              Get.offAll(const LoginPage());
+            },
+            icon: Icon(
+              color: Colors.grey[850],
+              size: 30,
+              Icons.arrow_back_ios_new_rounded,
+            )),
         surfaceTintColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -137,290 +68,59 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
+      body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(
-                    height: 10,
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: size.height / 99,
+                child: GetBuilder<SignupController>(
+                  builder: (signupController) => ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: size.width / 4,
+                        height: size.height / 100,
+                        decoration: BoxDecoration(
+                          color: signupController.progress[index].value == true
+                              ? Colors.green[800]
+                              : Colors.grey[850]!.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return SizedBox(
+                        width: size.width / 10,
+                      );
+                    },
+                    itemCount: signupController.progress.length,
                   ),
-                  SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          errorMessage,
-                          style: GoogleFonts.mPlusRounded1c(
-                            color: Colors.red[900],
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Form(
-                          key: formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextFormField(
-                                controller: userNameController,
-                                validator: validateUserName,
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(
-                                    Icons.person_rounded,
-                                  ),
-                                  hintText: 'User Name',
-                                  label: Text(
-                                    'User Name',
-                                    style: GoogleFonts.mPlusRounded1c(
-                                      color: Colors.grey[850],
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        width: 2.5,
-                                        color: Colors.grey[850] ??
-                                            Colors.transparent,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  errorText: errorTextUserName,
-                                  errorStyle: GoogleFonts.mPlusRounded1c(
-                                    color: Colors.red[900],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                cursorColor: Colors.grey[850],
-                                cursorRadius: const Radius.circular(25),
-                                cursorWidth: 2.5,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                keyboardType: TextInputType.emailAddress,
-                                controller: emailController,
-                                validator: validateEmail,
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(
-                                    Icons.email_rounded,
-                                  ),
-                                  hintText: 'Email',
-                                  label: Text(
-                                    'Email',
-                                    style: GoogleFonts.mPlusRounded1c(
-                                      color: Colors.grey[850],
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        width: 2.5,
-                                        color: Colors.grey[850] ??
-                                            Colors.transparent,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  errorText: errorTextEmail,
-                                  errorStyle: GoogleFonts.mPlusRounded1c(
-                                    color: Colors.red[900],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                cursorColor: Colors.grey[850],
-                                cursorRadius: const Radius.circular(25),
-                                cursorWidth: 2.5,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                obscureText: hidPass,
-                                controller: passController,
-                                validator: validatePassword,
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(
-                                    Icons.lock_rounded,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        hidPass = !hidPass;
-                                      });
-                                    },
-                                    icon: Icon(
-                                      hidPass == true
-                                          ? Icons.visibility_off_rounded
-                                          : Icons.visibility_rounded,
-                                    ),
-                                  ),
-                                  hintText: 'Password',
-                                  label: Text(
-                                    'Password',
-                                    style: GoogleFonts.mPlusRounded1c(
-                                      color: Colors.grey[850],
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        width: 2.5,
-                                        color: Colors.grey[850] ??
-                                            Colors.transparent,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  errorText: errorTextPassword,
-                                  errorStyle: GoogleFonts.mPlusRounded1c(
-                                    color: Colors.red[900],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                cursorColor: Colors.grey[850],
-                                cursorRadius: const Radius.circular(25),
-                                cursorWidth: 2.5,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                obscureText: hidConfirmPass,
-                                controller: confirmPassController,
-                                validator: validateSubmitPassword,
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(
-                                    Icons.lock_reset_rounded,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        hidConfirmPass = !hidConfirmPass;
-                                      });
-                                    },
-                                    icon: Icon(
-                                      hidConfirmPass == true
-                                          ? Icons.visibility_off_rounded
-                                          : Icons.visibility_rounded,
-                                    ),
-                                  ),
-                                  hintText: 'Confirm Password',
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        width: 2.5,
-                                        color: Colors.grey[850] ??
-                                            Colors.transparent,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                ),
-                                cursorColor: Colors.grey[850],
-                                cursorRadius: const Radius.circular(25),
-                                cursorWidth: 2.5,
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          width: size.width,
-                          height: size.width / 8,
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              if (formKey.currentState!.validate()) {
-                                signUpAccount(
-                                    emailController.text, passController.text);
-                              }
-                            },
-                            style: ButtonStyle(
-                              shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.grey[850]),
-                            ),
-                            child: Text(
-                              'Sing Up',
-                              style: GoogleFonts.mPlusRounded1c(
-                                color: Colors.white,
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "I have account",
-                          style: GoogleFonts.mPlusRounded1c(
-                            color: Colors.grey[850],
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          width: size.width,
-                          height: size.width / 8,
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              await signUpAccount(
-                                  emailController.text, passController.text);
-                              Get.back();
-                            },
-                            style: ButtonStyle(
-                              shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(
-                                    side: BorderSide(
-                                        color: Colors.grey[850] ??
-                                            Colors.transparent),
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                              backgroundColor:
-                                  const MaterialStatePropertyAll(Colors.white),
-                            ),
-                            child: Text(
-                              'Sign In',
-                              style: GoogleFonts.mPlusRounded1c(
-                                color: Colors.grey[850],
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+              SizedBox(
+                height: size.height / 50,
+              ),
+              SizedBox(
+                height: size.height / 2,
+                child: PageView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: pages.length,
+                  controller: signupController.pageController,
+                  onPageChanged: (index) {
+                    index++;
+
+                    signupController.updatePage(index);
+                  },
+                  itemBuilder: (context, index) {
+                    return pages[signupController.currentIndex.value];
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),

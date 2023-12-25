@@ -23,7 +23,8 @@ class SqlDb {
       CREATE TABLE "notes" (
         "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         "title" TEXT NOT NULL,
-        "content" TEXT NOT NULL
+        "content" TEXT NOT NULL,
+        "userid" INTEGER NOT NULL
       );
 ''');
     await db.execute('''

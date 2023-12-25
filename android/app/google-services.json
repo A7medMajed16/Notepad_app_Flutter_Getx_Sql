@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "1038920004038-p13uh8vdfb9v9k5v800gdt4me9ncmm5l.apps.googleusercontent.com",
+          "client_id": "1038920004038-saa1lfq8v68tr38bgfbfrm9dt1gnpvhq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.trynote",
+            "certificate_hash": "fadb32ba3b950e3ec11f9a3709adfc872cc41991"
+          }
+        },
+        {
+          "client_id": "1038920004038-5me03tlg8m5th1674pvp1nqqgm66rqqo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +35,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1038920004038-p13uh8vdfb9v9k5v800gdt4me9ncmm5l.apps.googleusercontent.com",
+              "client_id": "1038920004038-5me03tlg8m5th1674pvp1nqqgm66rqqo.apps.googleusercontent.com",
               "client_type": 3
             },
             {

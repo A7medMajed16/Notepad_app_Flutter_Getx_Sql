@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,9 +8,6 @@ import 'package:trynote/pages/accountpage.dart';
 import 'package:trynote/pages/addnote.dart';
 import 'package:trynote/pages/favoritepage.dart';
 import 'package:trynote/pages/homepage.dart';
-
-
-
 
 class Home extends StatefulWidget {
   // ignore: use_key_in_widget_constructors
@@ -38,6 +36,8 @@ class _HomeState extends State<Home> {
 
   // Titles for app bar
   List<String> appBar = ['Notes', 'Favorites', 'Add note', 'Account'];
+
+  
 
   @override
   void initState() {
@@ -78,76 +78,71 @@ class _HomeState extends State<Home> {
           },
         ),
         bottomNavigationBar: Container(
-          margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-          height: size.width * .155,
+          margin: const EdgeInsets.only(bottom: 15, left: 10, right: 10),
+          padding: const EdgeInsets.only(left: 10),
+          height: size.width * 0.155,
           decoration: BoxDecoration(
             color: Colors.grey[850],
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(.15),
+                color: Colors.black.withOpacity(0.15),
                 blurRadius: 30,
                 offset: const Offset(0, 10),
               ),
             ],
             borderRadius: BorderRadius.circular(50),
           ),
-          child: ListView.builder(
-            itemCount: 4,
+          child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: size.width * .024),
-            itemBuilder: (context, index) => InkWell(
-              onTap: () {
-                controller.pageController.animateToPage(
-                  index,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(4, (index) {
+                return InkWell(
+                  onTap: () {
+                    controller.pageController.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.fastLinearToSlowEaseIn,
+                        margin: EdgeInsets.only(
+                          bottom: index == controller.currentIndex.value
+                              ? 0
+                              : size.width * 0.029,
+                          right: size.width * 0.0422,
+                          left: size.width * 0.0422,
+                        ),
+                        width: size.width * 0.128,
+                        height: index == controller.currentIndex.value
+                            ? size.width * 0.014
+                            : 0,
+                        decoration: const BoxDecoration(
+                          color: Color(0xff00ADB5),
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(10),
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        listOfIcons[index],
+                        size: size.width * 0.076,
+                        color: index == controller.currentIndex.value
+                            ? const Color(0xff00ADB5)
+                            : Colors.white54,
+                      ),
+                      SizedBox(height: size.width * 0.03),
+                    ],
+                  ),
                 );
-              },
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              child: FutureBuilder(
-                  future: Future.delayed(Duration.zero),
-                  builder: (context, snapshot) {
-                    if (controller.pageController.positions.isNotEmpty) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.fastLinearToSlowEaseIn,
-                            margin: EdgeInsets.only(
-                              bottom: index ==
-                                      controller.pageController.page?.round()
-                                  ? 0
-                                  : size.width * .029,
-                              right: size.width * .0422,
-                              left: size.width * .0422,
-                            ),
-                            width: size.width * .128,
-                            height: index == controller.currentIndex.value
-                                ? size.width * .014
-                                : 0,
-                            decoration: const BoxDecoration(
-                              color: Color(0xff00ADB5),
-                              borderRadius: BorderRadius.vertical(
-                                bottom: Radius.circular(10),
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            listOfIcons[index],
-                            size: size.width * .076,
-                            color: index == controller.currentIndex.value
-                                ? const Color(0xff00ADB5)
-                                : Colors.white54,
-                          ),
-                          SizedBox(height: size.width * .03),
-                        ],
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  }),
+              }),
             ),
           ),
         ),

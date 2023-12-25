@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trynote/data/sqldb.dart';
-
-
-
+import 'package:trynote/main.dart';
 
 class FavoritePage extends StatefulWidget {
   // ignore: use_key_in_widget_constructors
@@ -23,7 +21,7 @@ class _FavoritePageState extends State<FavoritePage> {
     List<Map> resultTwo = await sqlDb.readData('''
     SELECT notes.*
     FROM notes
-    JOIN favorite_notes ON notes.id = favorite_notes.id;
+    JOIN favorite_notes ON notes.id = favorite_notes.id AND notes.userid='${sharepref!.getString('id')}';
     ''');
     if (mounted) {
       setState(() {

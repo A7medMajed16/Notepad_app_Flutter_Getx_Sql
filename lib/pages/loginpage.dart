@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, unused_local_variable
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,7 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:rive/rive.dart';
-import 'package:trynote/auth/logincontroller.dart';
+import 'package:trynote/main.dart';
+
 import 'package:trynote/home.dart';
 import 'package:trynote/pages/signuppage.dart';
 
@@ -20,10 +22,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  LoginController controller = Get.put(LoginController());
   GlobalKey<FormState> loginFormKey = GlobalKey();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
   bool hidPass = true;
   String errorMessage = '';
   String? errorTextEmail;
@@ -35,35 +36,62 @@ class _LoginPageState extends State<LoginPage> {
   SMIInput<bool>? trigSuccess;
   SMIInput<bool>? trigFail;
 
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+
   Future signingInWithEmail(String email, String pass) async {
     if (mounted) {
       try {
         final credential =
             await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passController.text.trim(),
         );
+        
         Get.offAll(const Home());
-      } on FirebaseAuthException catch (e) {
-        print('===============');
-        print(e);
-
-        if (e.code == 'user-not-found') {
-          setState(() {
-            errorMessage = 'No user found for that email.';
-          });
-        } else if (e.code == 'wrong-password') {
-          setState(() {
-            errorMessage = 'Wrong password provided for that user.';
-          });
-        }
-      } catch (e) {
-        print('Unexpected Error: $e');
+      } on FirebaseAuthException {
+        Get.snackbar(
+          'Singing In Failed',
+          'Email or Password is incorrect',
+          duration: const Duration(seconds: 5),
+          icon: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: const Icon(
+              Icons.error,
+              size: 40,
+              color: Colors.red,
+            ),
+          ),
+          dismissDirection: DismissDirection.horizontal,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.grey[850]!.withOpacity(0.7),
+          titleText: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              'Singing In Failed',
+              style: GoogleFonts.mPlusRounded1c(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          messageText: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              'Email or Password is incorrect',
+              style: GoogleFonts.mPlusRounded1c(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        );
       }
     }
   }
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -78,7 +106,11 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    await sharepref!.setString('name', '${googleUser!.displayName}');
+    await sharepref!.setString('email', googleUser.email);
+
+    Get.offAll(const Home());
   }
 
   String? validateEmail(String? value) {
@@ -179,7 +211,7 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               TextFormField(
                                 keyboardType: TextInputType.emailAddress,
-                                controller: emailController,
+                                controller: _emailController,
                                 validator: validateEmail,
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(
@@ -226,7 +258,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               TextFormField(
                                 obscureText: hidPass,
-                                controller: passController,
+                                controller: _passController,
                                 validator: validatePassword,
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(
@@ -292,8 +324,8 @@ class _LoginPageState extends State<LoginPage> {
                           child: ElevatedButton(
                             onPressed: () async {
                               if (loginFormKey.currentState!.validate()) {
-                                signingInWithEmail(
-                                    emailController.text, passController.text);
+                                signingInWithEmail(_emailController.text,
+                                    _passController.text);
                               }
                             },
                             style: ButtonStyle(

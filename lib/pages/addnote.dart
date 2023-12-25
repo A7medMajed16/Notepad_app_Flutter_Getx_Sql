@@ -4,9 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trynote/controller/homecontroller.dart';
 import 'package:trynote/data/sqldb.dart';
-
-
-
+import 'package:trynote/main.dart';
 
 class AddNote extends StatefulWidget {
   const AddNote({super.key});
@@ -19,6 +17,8 @@ class _AddNoteState extends State<AddNote> {
   GlobalKey<FormState> addNoteFormKey = GlobalKey();
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
+  final FocusNode _titleFocusNode = FocusNode();
+  final FocusNode _contentFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -53,6 +53,10 @@ class _AddNoteState extends State<AddNote> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       onPressed: () {
+                        _titleFocusNode.unfocus();
+                        _contentFocusNode.unfocus();
+                        titleController.clear();
+                        contentController.clear();
                         Get.find<HomeController>().updatePage(0);
                         controller.pageController.jumpToPage(0);
                       },
@@ -81,6 +85,7 @@ class _AddNoteState extends State<AddNote> {
                       child: Column(
                         children: [
                           TextFormField(
+                            focusNode: _titleFocusNode,
                             decoration: InputDecoration(
                               hintText: 'Note title',
                               label: Text(
@@ -112,6 +117,7 @@ class _AddNoteState extends State<AddNote> {
                             height: 10,
                           ),
                           TextFormField(
+                            focusNode: _contentFocusNode,
                             decoration: InputDecoration(
                               label: Text(
                                 'Content',
@@ -149,6 +155,10 @@ class _AddNoteState extends State<AddNote> {
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
+                                    _titleFocusNode.unfocus();
+                                    _contentFocusNode.unfocus();
+                                    titleController.clear();
+                                    contentController.clear();
                                     Get.find<HomeController>().updatePage(0);
                                     controller.pageController.jumpToPage(0);
                                   },
@@ -182,10 +192,14 @@ class _AddNoteState extends State<AddNote> {
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     int result = await sqlDb.insertData('''
-                            INSERT INTO notes (title,content)
-                            VALUES ("${titleController.text}","${contentController.text}")
+                            INSERT INTO notes (title,content,userid)
+                            VALUES ("${titleController.text}","${contentController.text}","${sharepref!.getString('id')}")
                             ''');
                                     if (result > 0) {
+                                      _titleFocusNode.unfocus();
+                                      _contentFocusNode.unfocus();
+                                      titleController.clear();
+                                      contentController.clear();
                                       Get.find<HomeController>().updatePage(0);
                                       controller.pageController.jumpToPage(0);
                                     }

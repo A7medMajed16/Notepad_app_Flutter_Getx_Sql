@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trynote/data/sqldb.dart';
-
-
-
+import 'package:trynote/main.dart';
+import 'package:trynote/pages/editnotes.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> readData() async {
     List<Map<String, dynamic>> result =
-        await sqlDb.readData("SELECT * FROM notes");
+        await sqlDb.readData("SELECT * FROM notes WHERE notes.userid='${sharepref!.getString('id')}'");
     setState(() {
       notes.addAll(result);
     });
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
     List<Map<String, dynamic>> resultTwo = await sqlDb.readData('''
     SELECT notes.*
     FROM notes
-    JOIN favorite_notes ON notes.id = favorite_notes.id;
+    JOIN favorite_notes ON notes.id = favorite_notes.id AND notes.userid='${sharepref!.getString('id')}';
     ''');
     setState(() {
       favoriteNotes.addAll(resultTwo);
@@ -163,24 +163,42 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                trailing: IconButton(
-                  onPressed: () async {
-                    if (favoriteNotes
-                        .any((favorite) => favorite['id'] == note['id'])) {
-                      await removeFromFavorites(note['id']);
-                    } else {
-                      await insertToFavorites(note['id']);
-                    }
-                    readFavoriteData();
-                  },
-                  icon: Icon(
-                    favoriteNotes
-                            .any((favorite) => favorite['id'] == note['id'])
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_outline_rounded,
-                    color: const Color(0xff00ADB5),
-                    size: 30,
-                  ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        if (favoriteNotes
+                            .any((favorite) => favorite['id'] == note['id'])) {
+                          await removeFromFavorites(note['id']);
+                        } else {
+                          await insertToFavorites(note['id']);
+                        }
+                        readFavoriteData();
+                      },
+                      icon: Icon(
+                        favoriteNotes
+                                .any((favorite) => favorite['id'] == note['id'])
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_outline_rounded,
+                        color: const Color(0xff00ADB5),
+                        size: 30,
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          Get.to(EditNote(
+                            content: note['content'],
+                            title: note['title'],
+                            id: note['id'],
+                          ));
+                        },
+                        icon: const Icon(
+                          Icons.edit_note_rounded,
+                          color: Colors.white,
+                          size: 30,
+                        ))
+                  ],
                 ),
               ),
             ),
