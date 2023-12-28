@@ -11,7 +11,6 @@ TryNote is a feature-rich Flutter Notepad app designed to provide users with a s
 - Utilizes GetX for efficient state management and UI updates.
 
 #### Home Screen:
-![Home Screen]
 ＜img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/eaffc5ee-1606-4090-9257-ffea7355ccc9" width="500" height="300"＞
 
 ### 2. Add Note Screen (addnote.dart):
