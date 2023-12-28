@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,8 +20,7 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   GlobalKey<FormState> formKey = GlobalKey();
 
-  SignupController signupController =
-      Get.put(SignupController(), permanent: true);
+  SignupController signupController = Get.find();
 
   TextEditingController userNameController = TextEditingController();
 
@@ -45,7 +45,8 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () {
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
               signupController.clearProgress();
               signupController.updatePage(0);
               Get.offAll(const LoginPage());
@@ -64,63 +65,66 @@ class _SignUpPageState extends State<SignUpPage> {
             color: Colors.grey[850],
             fontSize: 35,
             fontWeight: FontWeight.bold,
-            fontStyle: FontStyle.italic,
           ),
         ),
       ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: size.height / 99,
-                child: GetBuilder<SignupController>(
-                  builder: (signupController) => ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        width: size.width / 4,
-                        height: size.height / 100,
-                        decoration: BoxDecoration(
-                          color: signupController.progress[index].value == true
-                              ? Colors.green[800]
-                              : Colors.grey[850]!.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(
-                        width: size.width / 10,
-                      );
-                    },
-                    itemCount: signupController.progress.length,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: size.height / 99,
+                  child: GetBuilder<SignupController>(
+                    builder: (signupController) => ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          width: size.width / 4,
+                          height: size.height / 100,
+                          decoration: BoxDecoration(
+                            color:
+                                signupController.progress[index].value == true
+                                    ? const Color(0xff00ADB5)
+                                    : Colors.grey[850]!.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          width: size.width / 10,
+                        );
+                      },
+                      itemCount: signupController.progress.length,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: size.height / 50,
-              ),
-              SizedBox(
-                height: size.height / 2,
-                child: PageView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: pages.length,
-                  controller: signupController.pageController,
-                  onPageChanged: (index) {
-                    index++;
-
-                    signupController.updatePage(index);
-                  },
-                  itemBuilder: (context, index) {
-                    return pages[signupController.currentIndex.value];
-                  },
+                SizedBox(
+                  height: size.height / 50,
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: size.height / 2,
+                  child: PageView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: pages.length,
+                    controller: signupController.pageController,
+                    onPageChanged: (index) {
+                      if (index < 2) {
+                        index++;
+                        signupController.updatePage(index);
+                      }
+                    },
+                    itemBuilder: (context, index) {
+                      return pages[signupController.currentIndex.value];
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

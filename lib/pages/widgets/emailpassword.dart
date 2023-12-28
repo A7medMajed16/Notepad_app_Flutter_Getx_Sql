@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trynote/controller/signupcontroller.dart';
-import 'package:trynote/pages/loginpage.dart';
 
 class EmailPass extends StatefulWidget {
   const EmailPass({super.key});
@@ -26,20 +25,26 @@ class _EmailPassState extends State<EmailPass> {
 
   bool hidPass = true;
   bool hidConfirmPass = true;
+  bool isSigningUp = false;
 
   Future signUpAccount(String emailAddress, String password) async {
     if (mounted) {
       try {
+        setState(() {
+          isSigningUp = true; // Set the flag to true when signup starts
+        });
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailAddress,
           password: password,
         );
+        await FirebaseAuth.instance.currentUser!.sendEmailVerification();
         signupController.updateEmailPass(emailAddress, password);
+        signupController.updateProgress(1, true);
+        signupController.updatePage(1);
         signupController.pageController.nextPage(
           duration: const Duration(milliseconds: 500),
           curve: Curves.easeInOut,
         );
-        signupController.updatePage(signupController.currentIndex.value + 1);
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password' && mounted) {
           setState(() {
@@ -89,6 +94,10 @@ class _EmailPassState extends State<EmailPass> {
             ),
           ),
         );
+      } finally {
+        setState(() {
+          isSigningUp = false; // Reset the flag when signup completes
+        });
       }
     }
   }
@@ -255,6 +264,14 @@ class _EmailPassState extends State<EmailPass> {
                       ),
                     ),
                     hintText: 'Confirm Password',
+                    label: Text(
+                      'Confirm Password',
+                      style: GoogleFonts.mPlusRounded1c(
+                        color: Colors.grey[850],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           width: 2.5,
@@ -281,87 +298,67 @@ class _EmailPassState extends State<EmailPass> {
           ),
           Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              GestureDetector(
-                onTap: () {
-                  signupController.updatePage(0);
-                  signupController.clearProgress();
-                  Get.offAll(const LoginPage());
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: size.width / 8,
-                      height: size.width / 8,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(size.width / 25),
-                          border: Border.all(
-                            color: Colors.grey[850] ?? Colors.transparent,
-                            width: 2,
-                          )),
-                      child: Icon(
-                        color: Colors.grey[850],
-                        size: 25,
-                        Icons.arrow_back_ios_rounded,
+              isSigningUp
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: SizedBox(
+                        width: size.width / 10,
+                        height: size.width / 10,
+                        child: Container(
+                          width: size.width / 8,
+                          height: size.width / 8,
+                          decoration: BoxDecoration(
+                              color: Colors.grey[850],
+                              borderRadius:
+                                  BorderRadius.circular(size.width / 25)),
+                          child: Container(
+                            margin: const EdgeInsets.all(10),
+                            child: const CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      'Cancel',
-                      style: GoogleFonts.mPlusRounded1c(
-                        color: Colors.grey[850],
-                        fontSize: size.width / 15,
-                        fontWeight: FontWeight.bold,
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        if (formKey.currentState!.validate()) {
+                          signUpAccount(
+                              emailController.text, passController.text);
+                        }
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Next',
+                            style: GoogleFonts.mPlusRounded1c(
+                              color: Colors.grey[850],
+                              fontSize: size.width / 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                              width: size.width / 8,
+                              height: size.width / 8,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[850],
+                                  borderRadius:
+                                      BorderRadius.circular(size.width / 25)),
+                              child: const Icon(
+                                color: Colors.white,
+                                size: 25,
+                                Icons.navigate_next_rounded,
+                              )),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  signupController.pageController.nextPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                  );
-                  signupController.updatePage(1);
-                  signupController.updateProgress(0, true);
-                  // if (formKey.currentState!.validate()) {
-                  //   signUpAccount(emailController.text, passController.text);
-                  // }
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Next',
-                      style: GoogleFonts.mPlusRounded1c(
-                        color: Colors.grey[850],
-                        fontSize: size.width / 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                        width: size.width / 8,
-                        height: size.width / 8,
-                        decoration: BoxDecoration(
-                            color: Colors.grey[850],
-                            borderRadius:
-                                BorderRadius.circular(size.width / 25)),
-                        child: const Icon(
-                          color: Colors.white,
-                          size: 25,
-                          Icons.navigate_next_rounded,
-                        )),
-                  ],
-                ),
-              )
+                    )
             ],
           )
         ],

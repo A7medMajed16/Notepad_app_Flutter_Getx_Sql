@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -28,8 +29,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> readData() async {
-    List<Map<String, dynamic>> result =
-        await sqlDb.readData("SELECT * FROM notes WHERE notes.userid='${sharepref!.getString('id')}'");
+    sharepref!.setString('id', FirebaseAuth.instance.currentUser!.uid);
+    List<Map<String, dynamic>> result = await sqlDb.readData(
+        "SELECT * FROM notes WHERE notes.userid='${sharepref!.getString('id')}'");
     setState(() {
       notes.addAll(result);
     });
@@ -86,42 +88,45 @@ class _HomePageState extends State<HomePage> {
     final size = MediaQuery.of(context).size;
     if (notes.isEmpty) {
       return Center(
-        child: Stack(clipBehavior: Clip.none, children: [
-          Wrap(
-            alignment: WrapAlignment.center,
-            children: [
-              Text(
-                'No notes try add one using ',
-                style: GoogleFonts.mPlusRounded1c(
-                  color: Colors.grey[850]!.withOpacity(0.7),
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          controller: homeScrollController,
+          child: Stack(clipBehavior: Clip.none, children: [
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                Text(
+                  'No notes try add one using ',
+                  style: GoogleFonts.mPlusRounded1c(
+                    color: Colors.grey[850]!.withOpacity(0.7),
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Icon(
-                Icons.add_circle,
-                size: 35,
-                color: Colors.grey[850]!.withOpacity(0.7),
-              ),
-              Text(
-                'Icon in the bottom ',
-                style: GoogleFonts.mPlusRounded1c(
+                Icon(
+                  Icons.add_circle,
+                  size: 35,
                   color: Colors.grey[850]!.withOpacity(0.7),
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
                 ),
-              ),
-            ],
-          ),
-          Positioned(
-            bottom: -size.height / 3.4,
-            right: size.width / 3.3,
-            child: SizedBox(
-                width: size.width / 6,
-                height: size.width / 6,
-                child: SvgPicture.asset('assets/down-arrow-svgrepo-com.svg')),
-          )
-        ]),
+                Text(
+                  'Icon in the bottom ',
+                  style: GoogleFonts.mPlusRounded1c(
+                    color: Colors.grey[850]!.withOpacity(0.7),
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: -size.height / 3.4,
+              right: size.width / 3.3,
+              child: SizedBox(
+                  width: size.width / 6,
+                  height: size.width / 6,
+                  child: SvgPicture.asset('assets/down-arrow-svgrepo-com.svg')),
+            )
+          ]),
+        ),
       );
     } else {
       return ListView(

@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:rive/rive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trynote/main.dart';
 
 import 'package:trynote/home.dart';
@@ -36,7 +37,15 @@ class _LoginPageState extends State<LoginPage> {
   SMIInput<bool>? trigSuccess;
   SMIInput<bool>? trigFail;
 
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  @override
+  void initState() {
+    sharePrefInt();
+    super.initState();
+  }
+
+  Future<void> sharePrefInt() async {
+    sharepref ??= await SharedPreferences.getInstance();
+  }
 
   Future signingInWithEmail(String email, String pass) async {
     if (mounted) {
@@ -46,8 +55,48 @@ class _LoginPageState extends State<LoginPage> {
           email: _emailController.text.trim(),
           password: _passController.text.trim(),
         );
-        
-        Get.offAll(const Home());
+        if (FirebaseAuth.instance.currentUser!.emailVerified) {
+          Get.offAll(const Home());
+        } else {
+          Get.snackbar(
+            'Verify your account',
+            'Pleas check your mail',
+            duration: const Duration(seconds: 5),
+            icon: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              child: const Icon(
+                Icons.error,
+                size: 40,
+                color: Colors.red,
+              ),
+            ),
+            dismissDirection: DismissDirection.horizontal,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.grey[850]!.withOpacity(0.7),
+            titleText: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Verify your account',
+                style: GoogleFonts.mPlusRounded1c(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            messageText: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Pleas check your mail',
+                style: GoogleFonts.mPlusRounded1c(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
+        }
       } on FirebaseAuthException {
         Get.snackbar(
           'Singing In Failed',
@@ -92,6 +141,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future signInWithGoogle() async {
+    sharepref ??= await SharedPreferences.getInstance();
+
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -109,7 +160,15 @@ class _LoginPageState extends State<LoginPage> {
     await FirebaseAuth.instance.signInWithCredential(credential);
     await sharepref!.setString('name', '${googleUser!.displayName}');
     await sharepref!.setString('email', googleUser.email);
+    await sharepref!.setString('id', FirebaseAuth.instance.currentUser!.uid);
+    sharepref!.setString('url', '');
+    CollectionReference user = FirebaseFirestore.instance.collection('users');
 
+    await user.doc(FirebaseAuth.instance.currentUser!.uid).set({
+      'name': googleUser.displayName,
+      'email': googleUser.email,
+      'imagePath': '',
+    });
     Get.offAll(const Home());
   }
 
@@ -148,7 +207,6 @@ class _LoginPageState extends State<LoginPage> {
             color: Colors.grey[850],
             fontSize: 35,
             fontWeight: FontWeight.bold,
-            fontStyle: FontStyle.italic,
           ),
         ),
       ),

@@ -10,7 +10,9 @@ import 'package:trynote/main.dart';
 class AuthMiddleWare extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
-    if (sharepref!.getString('id') != null) return const RouteSettings(name: '/Home');
+    if (sharepref!.getString('id') != null) {
+      return const RouteSettings(name: '/Home');
+    }
     return null;
   }
 }

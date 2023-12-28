@@ -1,9 +1,11 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trynote/controller/homecontroller.dart';
+import 'package:trynote/main.dart';
 import 'package:trynote/pages/accountpage.dart';
 import 'package:trynote/pages/addnote.dart';
 import 'package:trynote/pages/favoritepage.dart';
@@ -36,13 +38,29 @@ class _HomeState extends State<Home> {
 
   // Titles for app bar
   List<String> appBar = ['Notes', 'Favorites', 'Add note', 'Account'];
-
-  
+  Map<String, dynamic> data = {};
 
   @override
   void initState() {
+    if (sharepref != null &&
+        sharepref!.getString('id') != FirebaseAuth.instance.currentUser!.uid) {
+      getServerData();
+    }
     super.initState();
     // Initialize the page controller
+  }
+
+  Future<void> getServerData() async {
+    DocumentReference documentReference = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+    await documentReference.get().then((value) {
+      data = value.data() as Map<String, dynamic>;
+      sharepref!.setString('name', data['name']);
+      sharepref!.setString('url', data['imagePath']);
+      sharepref!.setString('email', data['email']);
+      sharepref!.setString('id', FirebaseAuth.instance.currentUser!.uid);
+    });
   }
 
   @override
@@ -63,7 +81,6 @@ class _HomeState extends State<Home> {
               color: Colors.grey[850],
               fontSize: 35,
               fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
             ),
           ),
         ),
