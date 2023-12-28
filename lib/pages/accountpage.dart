@@ -31,6 +31,8 @@ class _AccountPageState extends State<AccountPage> {
   File? file;
   String url = '';
 
+  bool uploading = false;
+
   @override
   void initState() {
     final email = sharepref?.getString('email') ??
@@ -59,7 +61,13 @@ class _AccountPageState extends State<AccountPage> {
       DocumentReference documentReference = FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid);
-      documentReference.update({'name': newName, 'imagePath': newUrl});
+      documentReference.update({'name': newName});
+      if (file != null) {
+        DocumentReference documentReference = FirebaseFirestore.instance
+            .collection('users')
+            .doc(FirebaseAuth.instance.currentUser!.uid);
+        documentReference.update({'imagePath': newUrl});
+      }
     }
   }
 
@@ -366,9 +374,9 @@ class _AccountPageState extends State<AccountPage> {
                                               prefixIcon: const Icon(
                                                 Icons.person_rounded,
                                               ),
-                                              hintText: 'User Name',
+                                              hintText: 'New name',
                                               label: Text(
-                                                'User Name',
+                                                'New name',
                                                 style:
                                                     GoogleFonts.mPlusRounded1c(
                                                   color: Colors.grey[850],
@@ -400,51 +408,88 @@ class _AccountPageState extends State<AccountPage> {
                                     ),
                                     actionsAlignment: MainAxisAlignment.center,
                                     actions: [
-                                      SizedBox(
-                                        height: size.height / 18,
-                                        child: ElevatedButton.icon(
-                                          onPressed: () async {
-                                            if (file != null) {
-                                              await uploadImage();
-                                              await updateProfile(
-                                                  userNameController.text, url);
-                                              setState(() {
-                                                sharepref!.setString('name',
-                                                    userNameController.text);
-                                                sharepref!
-                                                    .setString('url', url);
-                                              });
-                                            }
-                                            Get.back();
-                                          },
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStatePropertyAll(
-                                              Colors.grey[850],
-                                            ),
-                                            shape: MaterialStatePropertyAll(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        size.width / 28),
-                                              ),
-                                            ),
-                                          ),
-                                          icon: const Icon(
-                                            color: Colors.white,
-                                            size: 25,
-                                            Icons.navigate_next_rounded,
-                                          ),
-                                          label: Text(
-                                            'Done',
-                                            style: GoogleFonts.mPlusRounded1c(
-                                              color: Colors.white,
-                                              fontSize: size.width / 15,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
+                                      StatefulBuilder(
+                                        builder: (context, setState) =>
+                                            SizedBox(
+                                          height: size.height / 18,
+                                          child: uploading
+                                              ? Container(
+                                                  width: size.width / 8,
+                                                  height: size.width / 8,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.grey[850],
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              size.width / 25)),
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child:
+                                                        const CircularProgressIndicator(
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                                  Color>(
+                                                              Colors.white),
+                                                    ),
+                                                  ),
+                                                )
+                                              : ElevatedButton.icon(
+                                                  onPressed: () async {
+                                                    setState(() {
+                                                      uploading = true;
+                                                    });
+                                                    if (file != null) {
+                                                      await uploadImage();
+                                                    }
+                                                    await updateProfile(
+                                                        userNameController.text,
+                                                        url);
+                                                    setState(() {
+                                                      sharepref!.setString(
+                                                          'name',
+                                                          userNameController
+                                                              .text);
+                                                      sharepref!.setString(
+                                                          'url', url);
+                                                      uploading = false;
+                                                    });
+                                                    Get.back();
+                                                  },
+                                                  style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStatePropertyAll(
+                                                      Colors.grey[850],
+                                                    ),
+                                                    shape:
+                                                        MaterialStatePropertyAll(
+                                                      RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    size.width /
+                                                                        28),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  icon: const Icon(
+                                                    color: Colors.white,
+                                                    size: 25,
+                                                    Icons.navigate_next_rounded,
+                                                  ),
+                                                  label: Text(
+                                                    'Done',
+                                                    style: GoogleFonts
+                                                        .mPlusRounded1c(
+                                                      color: Colors.white,
+                                                      fontSize: size.width / 15,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   );
                                 });

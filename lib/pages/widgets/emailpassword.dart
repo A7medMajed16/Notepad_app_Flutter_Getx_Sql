@@ -303,22 +303,18 @@ class _EmailPassState extends State<EmailPass> {
               isSigningUp
                   ? Padding(
                       padding: const EdgeInsets.only(right: 8),
-                      child: SizedBox(
-                        width: size.width / 10,
-                        height: size.width / 10,
+                      child: Container(
+                        width: size.width / 8,
+                        height: size.width / 8,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[850],
+                            borderRadius:
+                                BorderRadius.circular(size.width / 25)),
                         child: Container(
-                          width: size.width / 8,
-                          height: size.width / 8,
-                          decoration: BoxDecoration(
-                              color: Colors.grey[850],
-                              borderRadius:
-                                  BorderRadius.circular(size.width / 25)),
-                          child: Container(
-                            margin: const EdgeInsets.all(10),
-                            child: const CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
+                          margin: const EdgeInsets.all(10),
+                          child: const CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         ),
                       ),
@@ -345,17 +341,18 @@ class _EmailPassState extends State<EmailPass> {
                             width: 10,
                           ),
                           Container(
-                              width: size.width / 8,
-                              height: size.width / 8,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[850],
-                                  borderRadius:
-                                      BorderRadius.circular(size.width / 25)),
-                              child: const Icon(
-                                color: Colors.white,
-                                size: 25,
-                                Icons.navigate_next_rounded,
-                              )),
+                            width: size.width / 8,
+                            height: size.width / 8,
+                            decoration: BoxDecoration(
+                                color: Colors.grey[850],
+                                borderRadius:
+                                    BorderRadius.circular(size.width / 25)),
+                            child: const Icon(
+                              color: Colors.white,
+                              size: 25,
+                              Icons.navigate_next_rounded,
+                            ),
+                          ),
                         ],
                       ),
                     )
