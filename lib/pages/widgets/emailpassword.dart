@@ -38,6 +38,7 @@ class _EmailPassState extends State<EmailPass> {
           password: password,
         );
         await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+
         signupController.updateEmailPass(emailAddress, password);
         signupController.updateProgress(1, true);
         signupController.updatePage(1);

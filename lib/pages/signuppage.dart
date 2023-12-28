@@ -45,17 +45,18 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              signupController.clearProgress();
-              signupController.updatePage(0);
-              Get.offAll(const LoginPage());
-            },
-            icon: Icon(
-              color: Colors.grey[850],
-              size: 30,
-              Icons.arrow_back_ios_new_rounded,
-            )),
+          onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+            signupController.clearProgress();
+            signupController.updatePage(0);
+            Get.offAll(const LoginPage());
+          },
+          icon: Icon(
+            color: Colors.grey[850],
+            size: 30,
+            Icons.arrow_back_ios_new_rounded,
+          ),
+        ),
         surfaceTintColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -113,7 +114,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     itemCount: pages.length,
                     controller: signupController.pageController,
                     onPageChanged: (index) {
-                      if (index < 2) {
+                      if (index < 1) {
                         index++;
                         signupController.updatePage(index);
                       }

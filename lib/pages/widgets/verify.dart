@@ -18,8 +18,8 @@ class _VerifyState extends State<Verify> {
 
   @override
   void initState() {
-    super.initState();
     checkEmailVerification();
+    super.initState();
   }
 
   void checkEmailVerification() async {
@@ -37,7 +37,7 @@ class _VerifyState extends State<Verify> {
         await user
             .reload(); // Reload user data to get the latest emailVerified status
         user = FirebaseAuth.instance.currentUser; // Get the user data again
-        if (user!.emailVerified) {
+        if (user!.emailVerified == true) {
           timer.cancel(); // Stop the timer since email is verified
           signupController.updateProgress(2, true);
           signupController.updatePage(2);
