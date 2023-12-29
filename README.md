@@ -19,7 +19,7 @@ TryNote is a feature-rich Flutter Notepad app designed to provide users with a s
 - Utilizes SqlDb class for inserting new notes into the SQLite database.
 
 #### Add Note Screen:
-![Add Note Screen](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/bafb9958-550e-4db7-aa80-391c8abb4252)
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/bafb9958-550e-4db7-aa80-391c8abb4252" width="277" height="600" />
 
 ### 3. SQLite Database Operations (sqldb.dart):
 - Manages CRUD operations for the SQLite database.
@@ -35,47 +35,47 @@ TryNote is a feature-rich Flutter Notepad app designed to provide users with a s
 - Supports removal of notes by swiping right or left.
 
 #### Home Screen Interaction:
-![Home_Screen_Interaction](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/17541c00-9f71-42c6-9d28-552750649bc7)
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/17541c00-9f71-42c6-9d28-552750649bc7" width="277" height="600" />
 
 ### 6. Favorite Screen:
 - Displays only favorite notes.
 - Allows removal of favorite notes by swiping.
 
 #### Favorite Screen:
-![Empty_Favorite_Screen](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/5927867e-87df-48d4-8467-c2cf5168a1d7)
-![Favorite_Screen](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/dd4da45d-85fb-4494-9a98-f45f7e5c944c)
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/5927867e-87df-48d4-8467-c2cf5168a1d7" width="277" height="600" />
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/dd4da45d-85fb-4494-9a98-f45f7e5c944c" width="277" height="600" />
 
 ### 7. Add Note Screen Enhancements:
 - Supports automatic text direction change for Arabic input.
 
 #### Add Note Screen Enhancements:
-![Add_Note_Screen_Enhancements](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/f9413039-e4e1-4d87-a684-7535c151f6d8)
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/f9413039-e4e1-4d87-a684-7535c151f6d8" width="277" height="600" />
 
 ### 8. Account Page:
 - Shows profile picture, name, and email from Firebase server.
 - Includes options to logout and edit profile details.
 
 #### Account Page:
-![Account_Page](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/9ee8aa42-d726-4f4e-85d2-bb09aec06142)
-![Account_Page_Update_Profile_Data_one](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/35af7aec-a40b-4dd7-b75c-ea84880371da)
-![Account_Page_Update_Profile_Data_two](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/48608a14-bf40-488b-b9b1-4c6b5efae311)
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/9ee8aa42-d726-4f4e-85d2-bb09aec06142" width="277" height="600" />
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/35af7aec-a40b-4dd7-b75c-ea84880371da" width="277" height="600" />
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/48608a14-bf40-488b-b9b1-4c6b5efae311" width="277" height="600" />
 
 ### 9. Signup Screen:
 - Guides users through email and password setup.
 - Performs email verification and facilitates username and profile picture selection.
 
 #### Signup Screen:
-![Signup_Email_and_Password_Screen](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/907d838f-5415-4ac5-9c3f-a8bc461f3047)
-![Signup_verification_Screen](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/78857a3f-81fa-460f-a792-ccfcd64f41c2)
-![Signup_Username_and_Profile_Picture_Screen](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/9ea7926c-95fa-4942-9a5f-fb7f2bb0b5fc)
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/907d838f-5415-4ac5-9c3f-a8bc461f3047" width="277" height="600" />
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/78857a3f-81fa-460f-a792-ccfcd64f41c2" width="277" height="600" />
+<img src="https://https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/9ea7926c-95fa-4942-9a5f-fb7f2bb0b5fc" width="277" height="600" />
 
 ### 10. Login Page:
 - Enables entry via email and password or Google account sign-in.
 - Automatically adds the username to the Google email name.
 
 #### Login Page:
-![[Login_Page](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/99d26b30-041a-4579-ac29-cd39fed4cabc)
-![Login_Page_in Password_entering](https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/1d6c538d-b45a-47c2-a705-0b614a9092a7)
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/99d26b30-041a-4579-ac29-cd39fed4cabc" width="277" height="600" />
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/1d6c538d-b45a-47c2-a705-0b614a9092a7" width="277" height="600" />
 
 ## How to Use:
 1. Clone the repository.
