@@ -122,9 +122,5 @@ https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/5a2
 
 **Note:** The code is protected by GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007.
 
-**GitHub Repository:** [Link to GitHub Repository]
+**GitHub Repository:** [https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql]
 
-*For more details, refer to the documentation and codebase.*
-
----
-*Disclaimer: This README file is a suggested edit and may need to be customized based on specific project details and preferences.*
