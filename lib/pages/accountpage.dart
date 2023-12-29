@@ -310,9 +310,10 @@ class _AccountPageState extends State<AccountPage> {
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(50),
-                                              child: sharepref!
-                                                          .getString('url') !=
-                                                      ''
+                                              child: sharepref!.getString(
+                                                              'url') !=
+                                                          '' ||
+                                                      file != null
                                                   ? SizedBox(
                                                       width: size.width / 5,
                                                       height: size.width / 5,

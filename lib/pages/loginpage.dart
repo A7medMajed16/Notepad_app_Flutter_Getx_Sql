@@ -37,6 +37,8 @@ class _LoginPageState extends State<LoginPage> {
   SMIInput<bool>? trigSuccess;
   SMIInput<bool>? trigFail;
 
+  bool uploading = false;
+
   @override
   void initState() {
     sharePrefInt();
@@ -486,30 +488,59 @@ class _LoginPageState extends State<LoginPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () async {
-                                signInWithGoogle();
-                              },
-                              child: Container(
-                                width: size.width / 6.5,
-                                height: size.width / 6.5,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey[400] ??
-                                            Colors.transparent,
-                                        blurRadius: 10,
-                                        spreadRadius: 2,
+                            uploading
+                                ? Container(
+                                    width: size.width / 6.5,
+                                    height: size.width / 6.5,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey[400] ??
+                                                Colors.transparent,
+                                            blurRadius: 10,
+                                            spreadRadius: 2,
+                                          ),
+                                        ]),
+                                    child: Container(
+                                      margin: const EdgeInsets.all(10),
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.green[800]!),
                                       ),
-                                    ]),
-                                child: SvgPicture.asset(
-                                  'assets/google-icon-logo-svgrepo-com.svg',
-                                ),
-                              ),
-                            ),
+                                    ),
+                                  )
+                                : GestureDetector(
+                                    onTap: () async {
+                                      setState(() {
+                                        uploading = true;
+                                      });
+                                      signInWithGoogle();
+                                    },
+                                    child: Container(
+                                      width: size.width / 6.5,
+                                      height: size.width / 6.5,
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey[400] ??
+                                                  Colors.transparent,
+                                              blurRadius: 10,
+                                              spreadRadius: 2,
+                                            ),
+                                          ]),
+                                      child: SvgPicture.asset(
+                                        'assets/google-icon-logo-svgrepo-com.svg',
+                                      ),
+                                    ),
+                                  ),
                           ],
                         ),
                         const SizedBox(

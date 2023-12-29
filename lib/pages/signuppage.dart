@@ -38,6 +38,8 @@ class _SignUpPageState extends State<SignUpPage> {
     const Verify(),
     const Username(),
   ];
+  @override
+
 
   @override
   Widget build(BuildContext context) {

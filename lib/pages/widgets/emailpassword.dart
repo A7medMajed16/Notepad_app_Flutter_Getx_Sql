@@ -19,6 +19,10 @@ class _EmailPassState extends State<EmailPass> {
   TextEditingController passController = TextEditingController();
   TextEditingController confirmPassController = TextEditingController();
 
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passFocusNode = FocusNode();
+  final FocusNode _confirmPassFocusNode = FocusNode();
+
   String? errorTextEmail;
   String? errorTextSubmitPassword;
   String? errorTextPassword;
@@ -109,7 +113,12 @@ class _EmailPassState extends State<EmailPass> {
       return errorTextPassword = 'Please enter a password';
     }
     if (value.length < 6) {
-      return errorTextPassword = 'Password should be at least 6 characters';
+      return errorTextPassword =
+          'Weak Password it should be at least 6 characters';
+    } else {
+      setState(() {
+        return errorTextPassword = null;
+      });
     }
     return null;
   }
@@ -122,9 +131,9 @@ class _EmailPassState extends State<EmailPass> {
 
     if (!emailRegex.hasMatch(value)) {
       return errorTextEmail = 'Please enter a valid email address';
+    } else {
+      return errorTextEmail = null;
     }
-
-    return null;
   }
 
 // Validator for password
@@ -157,6 +166,7 @@ class _EmailPassState extends State<EmailPass> {
                   height: 10,
                 ),
                 TextFormField(
+                  focusNode: _emailFocusNode,
                   keyboardType: TextInputType.emailAddress,
                   controller: emailController,
                   validator: validateEmail,
@@ -195,6 +205,7 @@ class _EmailPassState extends State<EmailPass> {
                   height: 10,
                 ),
                 TextFormField(
+                  focusNode: _passFocusNode,
                   obscureText: hidPass,
                   controller: passController,
                   validator: validatePassword,
@@ -245,6 +256,7 @@ class _EmailPassState extends State<EmailPass> {
                   height: 10,
                 ),
                 TextFormField(
+                  focusNode: _confirmPassFocusNode,
                   obscureText: hidConfirmPass,
                   controller: confirmPassController,
                   validator: validateSubmitPassword,
@@ -325,6 +337,9 @@ class _EmailPassState extends State<EmailPass> {
                         if (formKey.currentState!.validate()) {
                           signUpAccount(
                               emailController.text, passController.text);
+                          _emailFocusNode.unfocus();
+                          _passFocusNode.unfocus();
+                          _confirmPassFocusNode.unfocus();
                         }
                       },
                       child: Row(

@@ -26,6 +26,8 @@ class _UsernameState extends State<Username> {
 
   String? errorTextUserName;
 
+  bool uploading = false;
+
   final ImagePicker picker = ImagePicker();
   File? file;
   String url = '';
@@ -91,7 +93,6 @@ class _UsernameState extends State<Username> {
     if (imageCamera != null) {
       file = File(imageCamera.path);
     }
-    uploadImage();
     setState(() {});
   }
 
@@ -101,7 +102,7 @@ class _UsernameState extends State<Username> {
     if (imageGallery != null) {
       file = File(imageGallery.path);
     }
-    uploadImage();
+
     setState(() {});
   }
 
@@ -304,43 +305,70 @@ class _UsernameState extends State<Username> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              GestureDetector(
-                onTap: () {
-                  if (formKey.currentState!.validate()) {
-                    addUser(userNameController.text,
-                        signupController.email.value, url);
-                    Get.offAll(const LoginPage());
-                  }
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Done',
-                      style: GoogleFonts.mPlusRounded1c(
-                        color: Colors.grey[850],
-                        fontSize: size.width / 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Container(
+              uploading
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Container(
                         width: size.width / 8,
                         height: size.width / 8,
                         decoration: BoxDecoration(
-                          color: Colors.grey[850],
-                          borderRadius: BorderRadius.circular(size.width / 25),
+                            color: Colors.grey[850],
+                            borderRadius:
+                                BorderRadius.circular(size.width / 25)),
+                        child: Container(
+                          margin: const EdgeInsets.all(10),
+                          child: const CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
                         ),
-                        child: const Icon(
-                          color: Colors.white,
-                          size: 25,
-                          Icons.navigate_next_rounded,
-                        )),
-                  ],
-                ),
-              )
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () async {
+                        if (formKey.currentState!.validate()) {
+                          setState(() {
+                            uploading = true;
+                          });
+                          await uploadImage();
+                          await addUser(userNameController.text,
+                              signupController.email.value, url);
+                          await FirebaseAuth.instance.signOut();
+                          signupController.clearProgress();
+                          signupController.updatePage(0);
+                          Get.offAll(const LoginPage());
+                        }
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Done',
+                            style: GoogleFonts.mPlusRounded1c(
+                              color: Colors.grey[850],
+                              fontSize: size.width / 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                              width: size.width / 8,
+                              height: size.width / 8,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[850],
+                                borderRadius:
+                                    BorderRadius.circular(size.width / 25),
+                              ),
+                              child: const Icon(
+                                color: Colors.white,
+                                size: 25,
+                                Icons.navigate_next_rounded,
+                              )),
+                        ],
+                      ),
+                    )
             ],
           ),
         ],
