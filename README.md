@@ -67,7 +67,8 @@ TryNote is a feature-rich Flutter Notepad app designed to provide users with a s
 #### Signup Screen:
 <img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/907d838f-5415-4ac5-9c3f-a8bc461f3047" width="277" height="600" />
 <img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/78857a3f-81fa-460f-a792-ccfcd64f41c2" width="277" height="600" />
-<img src="https://https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/9ea7926c-95fa-4942-9a5f-fb7f2bb0b5fc" width="277" height="600" />
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/9ea7926c-95fa-4942-9a5f-fb7f2bb0b5fc" width="277" height="600" />
+
 
 ### 10. Login Page:
 - Enables entry via email and password or Google account sign-in.
