@@ -21,6 +21,11 @@ TryNote is a feature-rich Flutter Notepad app designed to provide users with a s
 #### Add Note Screen:
 <img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/bafb9958-550e-4db7-aa80-391c8abb4252" width="277" height="600" />
 
+### 2. Edit Note Screen (addnote.dart):
+
+#### Edit Note Screen:
+<img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/f39657ca-002e-486b-85d8-44ef5471743b" width="277" height="600" />
+
 ### 3. SQLite Database Operations (sqldb.dart):
 - Manages CRUD operations for the SQLite database.
 - Implements methods for reading, inserting, updating, and deleting notes.
@@ -79,6 +84,8 @@ TryNote is a feature-rich Flutter Notepad app designed to provide users with a s
 <img src="https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/1d6c538d-b45a-47c2-a705-0b614a9092a7" width="277" height="600" />
 
 ## Videos for the App:
+https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/5a2cd0c2-81d2-4016-9979-d7f843eff72e
+
 
 
 ## How to Use:
