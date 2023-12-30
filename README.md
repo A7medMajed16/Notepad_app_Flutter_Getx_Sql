@@ -86,7 +86,10 @@ TryNote is a feature-rich Flutter Notepad app designed to provide users with a s
 ## Videos for the App:
 https://github.com/A7medMajed16/Notepad_app_Flutter_Getx_Sql/assets/86576698/5a2cd0c2-81d2-4016-9979-d7f843eff72e
 
+## Download Link :
 
+
+https://mega.nz/file/8zwQkDSJ#trLPAdse8dreUAJQBFiV3-YixsuqQ_Of-QG3eykfCQQ
 
 ## How to Use:
 1. Clone the repository.
